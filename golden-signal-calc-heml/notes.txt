@@ -1,0 +1,4 @@
+to run helm
+
+./deploy.sh dev
+./deploy.sh prod

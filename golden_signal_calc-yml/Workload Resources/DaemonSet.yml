@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: golden-signal-agent
+  namespace: golden-signal-calc
+spec:
+  selector:
+    matchLabels:
+      name: node-agent
+  template:
+    metadata:
+      labels:
+        name: node-agent
+    spec:
+      containers:
+        - name: node-agent
+          image: busybox
+          command: ["sh", "-c", "while true; do echo Node agent running; sleep 30; done"]

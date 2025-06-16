@@ -1,0 +1,35 @@
+replicaCount: 2
+image:
+  repository: your-app-image
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+env:
+  APP_ENV: "dev"
+  DB_PASSWORD: "mypassword"
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  readiness:
+    path: /ready
+    initialDelaySeconds: 5
+    periodSeconds: 5
+  startup:
+    path: /startup
+    failureThreshold: 30
+    periodSeconds: 10
