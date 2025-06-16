@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: golden-signal-calc-config
-  namespace: golden-signal-calc
-data:
-  APP_ENV: "production"
