@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: golden-signal-app
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: golden-signal-app
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 15s

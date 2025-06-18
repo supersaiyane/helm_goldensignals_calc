@@ -1,0 +1,18 @@
+groups:
+- name: slo.rules
+  rules:
+  - alert: HighErrorBudgetBurn
+    expr: |
+      (
+        1 - (
+          sum(rate(http_requests_total{status=~"2.."}[5m]))
+          /
+          sum(rate(http_requests_total[5m]))
+        )
+      ) > 0.001 * 14.4
+    for: 5m
+    labels:
+      severity: page
+    annotations:
+      summary: "High error budget burn rate"
+      description: "Error budget burn rate > 14.4x for 5m — investigate service performance"

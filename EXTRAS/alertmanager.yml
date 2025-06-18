@@ -1,0 +1,11 @@
+groups:
+  - name: golden_signals-alert
+    rules:
+      - alert : HighErrorRate
+        exp: sum(rate(http_request_total{job="checkout",status=~"5.."}[5m]))/sum(rate(http_request_total[5m]))>0.5
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: ""
+          description: ""

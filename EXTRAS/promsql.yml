@@ -1,0 +1,15 @@
+golden_signal
+
+Latency : 
+
+sum(rate(http_request_total{job="checkout",status=~"5.."}[5m])) / sum(rate(http_request_total){job="checkout"}[5m])
+
+or 
+
+histogram_quantile(0.95,rate(http_request_duration_second_bucket)[sum(rate(http_request_total{job="checkout",status=~"5.."}[5m]))
+
+Traffic 
+
+sum(rate(http_request_total{job="checkout",status=~"2.."}[5m])) / sum(rate(http_request_total){job="checkout"}[5m])
+
+rate(http_request_total{job="checkout"}[5m])
