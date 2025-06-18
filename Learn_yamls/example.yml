@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golden_signal
+  namespace: golden_signal_ns
+  label:
+    app: golden_signal
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: golden_signal
+  template:
+    metadata:
+      labels:
+        app: golden_signal
+    spec:
+      containers:
+        - name : golden_signal_con
+          image: golden_signal:latest
+          ports:
+            - containerPort: 3000
+          redinessProbe:
+            httpGet: 
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+
+---
+
+apiVersion: v1
+Kind: Service
+metadata:
+  name: golden_signal
+  namespace: golden_signal_ns
+  label:
+    app: golden_signal
+spec:
+  type: ClusterIp | NodePort | LoadBalancer
+  selector: 
+    app: golden_signal
+ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 3000
+
+---
+
+apiVersion: v1
+Kind: ConfigMap
+metadata:
+  name: golden_signal
+  namespace: golden_signal_ns
+  label:
+    app: golden_signal
+data:
+  KEY: VALUE
+
+---
+apiVersion: v1
+Kind: Secret
+metadata:
+  name: golden_signal
+  namespace: golden_signal_ns
+  label:
+    app: golden_signal
+type: Opaque
+data: 
+  KEY: VALUE    
+
+--- 
+
