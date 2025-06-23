@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: golden-signal
+spec:
+  hosts:
+    - golden-signal
+  http:
+    - route:
+        - destination:
+            host: golden-signal
+            subset: v1
+          weight: 100

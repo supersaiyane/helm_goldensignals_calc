@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golden-signal
+  labels:
+    app: golden-signal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golden-signal
+  template:
+    metadata:
+      labels:
+        app: golden-signal
+        version: v1
+    spec:
+      containers:
+        - name: golden-signal
+          image: golden-signal:latest
+          ports:
+            - containerPort: 3000

@@ -1,0 +1,13 @@
+groups:
+  - name: golden-signal-alerts
+    rules:
+      - alert: HighLatencyGoldenSignal
+        expr: histogram_quantile(0.95,
+          sum(rate(istio_request_duration_milliseconds_bucket{reporter="destination", destination_workload="golden-signal"}[1m]))
+          by (le)
+        ) > 500
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: "Golden Signal latency SLO breach"

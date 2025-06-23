@@ -1,0 +1,26 @@
+Resources:
+  PrimaryRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: ZONE_ID
+      Name: example.com.
+      Type: A
+      SetIdentifier: "Primary"
+      Failover: PRIMARY
+      TTL: 60
+      ResourceRecords:
+        - 192.0.2.1
+      HealthCheckId: hc-primary
+
+  SecondaryRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: ZONE_ID
+      Name: example.com.
+      Type: A
+      SetIdentifier: "Secondary"
+      Failover: SECONDARY
+      TTL: 60
+      ResourceRecords:
+        - 198.51.100.1
+      HealthCheckId: hc-secondary

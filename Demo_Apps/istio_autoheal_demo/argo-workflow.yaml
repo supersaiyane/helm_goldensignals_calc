@@ -1,0 +1,12 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: rollout-restart-golden-signal
+spec:
+  entrypoint: main
+  templates:
+    - name: main
+      container:
+        image: bitnami/kubectl
+        command: [sh, -c]
+        args: ["kubectl rollout restart deployment golden-signal"]

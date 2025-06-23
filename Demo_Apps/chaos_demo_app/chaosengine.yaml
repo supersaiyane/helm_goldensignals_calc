@@ -1,0 +1,13 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+metadata:
+  name: pod-kill
+  namespace: litmus
+spec:
+  appinfo:
+    appns: "golden-signal-ns"
+    applabel: "app=golden-signal"
+    appkind: "deployment"
+  chaosServiceAccount: litmus-admin
+  experiments:
+    - name: pod-delete
