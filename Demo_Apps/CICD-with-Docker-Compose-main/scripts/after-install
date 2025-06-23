@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /home/ubuntu/Services/Connectors
+sh PwaApp-cd.sh
