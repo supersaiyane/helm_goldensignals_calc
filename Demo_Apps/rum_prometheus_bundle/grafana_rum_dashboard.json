@@ -1,0 +1,25 @@
+{
+  "title": "RUM Metrics Dashboard",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "95th Percentile Page Load",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(rum_page_load_seconds_bucket[1m]))"
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "JS Errors by Browser",
+      "targets": [
+        {
+          "expr": "rate(js_error_total[1m])"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 27,
+  "version": 1
+}

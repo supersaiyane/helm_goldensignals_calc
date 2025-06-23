@@ -1,0 +1,31 @@
+name: Argo Rollouts CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.ECR_REGISTRY }}/golden-signal:v2
+
+      - name: Update Image Tag in Git
+        run: |
+          sed -i 's/tag: .*/tag: v2/' charts/values.yaml
+          git config user.name "GitHub Actions"
+          git config user.email "ci@example.com"
+          git commit -am "Update image tag"
+          git push

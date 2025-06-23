@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: golden-metrics
+spec:
+  metrics:
+    - name: success-rate
+      interval: 30s
+      successCondition: result > 95
+      provider:
+        prometheus:
+          query: |
+            sum(rate(http_requests_total{status=~"2.."}[1m])) / 
+            sum(rate(http_requests_total[1m])) * 100
+
+    - name: p95-latency
+      interval: 30s
+      successCondition: result < 500
+      provider:
+        prometheus:
+          query: |
+            histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[1m])) by (le))

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: golden-rollout
+spec:
+  replicas: 3
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: { duration: 1m }
+        - setWeight: 50
+        - pause: { duration: 1m }
+        - setWeight: 100
+      analysis:
+        templates:
+          - templateName: golden-metrics
+        startingStep: 1
+  selector:
+    matchLabels:
+      app: golden
+  template:
+    metadata:
+      labels:
+        app: golden
+    spec:
+      containers:
+        - name: golden
+          image: golden-signal:v2
+          ports:
+            - containerPort: 3000
