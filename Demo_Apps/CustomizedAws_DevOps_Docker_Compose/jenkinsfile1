@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+	environment{
+        BUILD_NUMBER="${env.BUILD_NUMBER}"
+    }
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git branch: 'master', url: 'ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/projectsforce-web-api'
+            }
+        }
+        stage('Running npm Install') {
+            steps {
+                sh 'npm install'
+            }
+        }
+        stage('Docker Image Creation') {
+            steps {
+                sh 'aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 772634497954.dkr.ecr.us-east-2.amazonaws.com'
+                sh 'docker build -t pf-web-api-prod .'
+                sh 'docker tag pf-web-api-prod:latest 772634497954.dkr.ecr.us-east-2.amazonaws.com/pf-web-api-prod:${BUILD_NUMBER}'
+                sh 'docker push 772634497954.dkr.ecr.us-east-2.amazonaws.com/pf-web-api-prod:\$BUILD_NUMBER'
+            }
+        }
+        stage('Get Image Version'){
+            steps{
+                sh 'aws eks --region us-east-2 update-kubeconfig --name projectforce-production-cluster'
+                script {
+                   env.PREVIOUS_DOCKER_TAG = sh (
+                        script: 'kubectl get deploy projectforce-webapi -o json | jq .spec.template.spec.containers[].image | cut -d\'"\' -f2 | awk \'{split($0,a,":"); print a[2]}\'',
+                        returnStdout: true
+                    ).trim()
+                    echo "Previous Docker Tag:${env.PREVIOUS_DOCKER_TAG}"
+                }
+            }
+        }
+        stage('Deploy To kubernetes Cluster') {
+            steps {
+				sh 'kubectl get deployments'
+				echo "Previous Docker Tag:${PREVIOUS_DOCKER_TAG}"
+                script{
+                    sh 'kubectl get deploy projectforce-webapi -o yaml | sed "s;772634497954.dkr.ecr.us-east-2.amazonaws.com/pf-web-api-prod:${PREVIOUS_DOCKER_TAG};772634497954.dkr.ecr.us-east-2.amazonaws.com/pf-web-api-prod:\${BUILD_NUMBER};g" | kubectl replace -f -'
+                }
+                sh 'kubectl scale deployments --replicas=0 projectforce-webapi'
+                sh 'kubectl scale deployments --replicas=1 projectforce-webapi'
+                sh 'kubectl get deployments'
+                sh 'kubectl get po'
+            }
+        }
+    }
+}

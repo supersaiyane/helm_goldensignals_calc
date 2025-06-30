@@ -1,0 +1,48 @@
+Host new-qa-db
+  Hostname 30.40.2.53
+  User ubuntu
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host new-stg-db
+  Hostname 30.50.23.244
+  User ubuntu
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host bastion	
+  Hostname 18.206.153.0
+  User ec2-user
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host stg-ssh-db
+  Hostname 20.50.107.31
+  User ubuntu
+  ProxyCommand ssh -W %h:%p bastion
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host qa-bastion
+  Hostname 52.202.4.16
+  User ec2-user
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host prod-bastion
+  Hostname 18.217.212.243
+  User ec2-user
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host prod-ssh-db
+  Hostname 30.70.4.178
+  User ubuntu
+  ProxyCommand ssh -W %h:%p prod-bastion
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host development-bastion
+  Hostname 54.84.102.187
+  User ubuntu
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+Host development-ssh-python
+  Hostname 30.70.1.155
+  User ubuntu
+  ProxyCommand ssh -W %h:%p development-bastion
+  Port 22
+  IdentityFile ~/.ssh/id_rsa

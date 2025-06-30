@@ -1,0 +1,39 @@
+pipeline {
+	agent any
+
+
+
+	stages {
+		stage('Cloning Git') {
+			steps {
+				git branch: 'master', url: 'ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/projectsforce-web-ui'
+			}
+		}
+
+		stage('Running npm Install') {
+			steps {
+				sh 'cp /var/lib/jenkins/.prodenv ./.env'
+				sh 'export NODE_OPTIONS=--max-old-space-size=5000'
+				sh 'npm cache clean --force'
+				sh 'npm install --force'
+				
+			}
+		}
+
+		stage('Creating Build & Copying to S3') {
+			steps {
+				sh 'CI=false  npm run-script build'
+				sh 'ls -l build'
+				sh 'cd build && aws s3 cp . s3://projectforce-react-apps --recursive'
+				sh 'aws s3 rm s3://projectforce-react-app/.*'
+			}
+		}
+
+		stage('Creating Invalidation') {
+			steps {
+				sh 'aws cloudfront create-invalidation --distribution-id E1LKADBNMJ0TRR --paths "/*"'
+			}
+		}
+
+	}
+}

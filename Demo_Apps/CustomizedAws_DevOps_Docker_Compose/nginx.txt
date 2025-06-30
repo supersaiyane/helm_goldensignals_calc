@@ -1,0 +1,97 @@
+server {
+        listen 80 ;
+        server_name dev-v3-auth.projectsforce.com;
+        location / {
+        proxy_set_header Host $host;
+            proxy_set_header X-Real_IP $remote_addr;
+            proxy_set_header X-Forwarded-For $host;
+            proxy_set_header X-Forwarded-Proto "https";
+            # add_header X-Frame-Options "";
+            proxy_pass http://localhost:8080;
+        }
+
+    location /auth-service {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real_IP $remote_addr;
+            proxy_set_header X-Forwarded-For $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # add_header X-Frame-Options "";
+            proxy_pass http://localhost:8000/auth-service;
+        }
+    
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/dev-v3-auth.projectsforce.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/dev-v3-auth.projectsforce.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+   server {
+        listen 80 ;
+        server_name dev-v3-services.projectsforce.com;
+        location /entity-service {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real_IP $remote_addr;
+            proxy_set_header X-Forwarded-For $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # add_header X-Frame-Options "";
+            proxy_pass http://localhost:8001;
+        }
+        location /scheduler-service {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real_IP $remote_addr;
+            proxy_set_header X-Forwarded-For $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # add_header X-Frame-Options "";
+            proxy_pass http://localhost:8004;
+        }
+    
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/dev-v3-services.projectsforce.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/dev-v3-services.projectsforce.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+   server {
+        listen 80 ;
+        server_name shared-services.projectsforce.com;
+        location / {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real_IP $remote_addr;
+            proxy_set_header X-Forwarded-For $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # add_header X-Frame-Options "";
+            proxy_pass http://localhost:8888;
+        }
+        location /kibana {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real_IP $remote_addr;
+            proxy_set_header X-Forwarded-For $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # add_header X-Frame-Options "";
+            proxy_pass http://localhost:5601;
+        }
+    }
+
+   server {
+        listen 80 ;
+        server_name dev-v3.projectsforce.com;
+        location / {
+            proxy_set_header Host $host;
+            proxy_set_header X-Real_IP $remote_addr;
+            proxy_set_header X-Forwarded-For $host;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            # add_header X-Frame-Options "";
+            proxy_pass http://localhost:3001;
+        }
+    
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/dev-v3.projectsforce.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/dev-v3.projectsforce.com/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
